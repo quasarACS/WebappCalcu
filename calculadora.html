@@ -18,103 +18,88 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 1rem;
-            box-sizing: border-box; /* Asegura que padding no aumente el tamaño */
+            padding: 0.5rem; /* Reducido para pantallas muy pequeñas */
+            box-sizing: border-box;
+            overflow-y: auto; /* Permite scroll del body si es necesario, pero el objetivo es evitarlo */
         }
         .calculator-container {
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Más espacio entre secciones */
+            gap: 15px; /* Espacio reducido entre secciones */
             width: 100%;
-            max-width: 400px; /* Ligeramente más ancho */
-            background-color: #333333; /* Gris oscuro para la superficie */
-            border-radius: 16px; /* Bordes redondeados suaves */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.2); /* Sombra Material más profunda */
-            padding: 20px;
-            /* Establecer una altura mínima para evitar saltos bruscos.
-               La altura final se ajustará al contenido, pero esta es una base. */
-            min-height: 550px; 
+            max-width: 320px; /* Ancho máximo más reducido para móviles pequeños */
+            background-color: #333333;
+            border-radius: 12px; /* Bordes ligeramente menos redondeados */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra ajustada */
+            padding: 15px; /* Padding reducido */
+            min-height: 500px; /* Altura mínima ajustada para caber en una vista común de móvil */
         }
         .mode-selection {
             display: flex;
             justify-content: center;
-            gap: 12px; /* Espaciado entre botones de modo */
+            gap: 8px; /* Espaciado reducido entre botones de modo */
             margin-bottom: 0;
         }
         .mode-button {
-            padding: 10px 24px;
-            font-size: 1.0rem;
+            padding: 8px 18px; /* Padding reducido */
+            font-size: 0.9rem; /* Tamaño de fuente reducido */
             font-weight: 500;
             border: none;
-            border-radius: 20px; /* Bordes más redondeados (pill shape) */
+            border-radius: 16px; /* Bordes redondeados (pill shape) */
             cursor: pointer;
             outline: none;
             transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-            background-color: #424242; /* Gris oscuro para inactivos */
-            color: #E0E0E0; /* Blanco suave para texto */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+            background-color: #424242;
+            color: #E0E0E0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Sombra más sutil */
         }
         .mode-button.active {
-            background-color: #1565C0; /* Azul fuerte para el activo (Blue 800) */
+            background-color: #1565C0;
             color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada al estar activo */
-            transform: translateY(-1px); /* Ligero efecto de elevación */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
         }
         .mode-button:hover:not(.active) {
-            background-color: #616161; /* Gris más claro al pasar el ratón */
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+            background-color: #616161;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
         }
         .mode-button:active {
             transform: translateY(0);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Sombra mínima al presionar */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
         }
-
-        /* La sección .business-mode-options se ha integrado al .output,
-           por lo que esta clase ya no será usada como contenedor principal. */
-        /* .business-mode-options {
-            background-color: #424242;
-            padding: 20px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        } */
 
         .rate-input-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px; /* Espacio reducido */
             width: 100%;
         }
         .rate-input-group label {
-            color: #BDBDBD; /* Gris claro */
-            font-size: 0.85rem; /* Más pequeño para que quepa */
-            min-width: 80px; /* Ancho fijo para la etiqueta */
+            color: #BDBDBD;
+            font-size: 0.8rem; /* Tamaño de fuente más pequeño */
+            min-width: 70px; /* Ancho fijo para la etiqueta */
             font-weight: 500;
         }
-        .rate-input-group input.rate-input { /* Usar una clase específica para el input */
+        .rate-input-group input.rate-input {
             flex-grow: 1;
-            padding: 8px 12px; /* Más compacto */
-            border-radius: 8px;
-            border: 1px solid #616161; /* Gris oscuro para el borde */
-            background-color: #212121; /* Fondo negro */
-            color: white; /* Texto blanco */
-            font-size: 1.0rem; /* Más pequeño */
+            padding: 6px 10px; /* Padding más compacto */
+            border-radius: 6px; /* Bordes ligeramente menos redondeados */
+            border: 1px solid #616161;
+            background-color: #212121;
+            color: white;
+            font-size: 0.95rem; /* Tamaño de fuente más pequeño */
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .rate-input-group input.rate-input:focus {
-            border-color: #2196F3; /* Azul primario al enfocar */
-            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3); /* Sombra de foco azul */
+            border-color: #2196F3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
         }
-        /* El botón de convertir ya no es necesario, su lógica está en JS */
-        /* .convert-button { ... } */
 
         .calculator-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 8px; /* Espacio reducido entre botones de la cuadrícula */
             padding: 0;
             background-color: transparent;
             border-radius: 0;
@@ -124,121 +109,120 @@
         }
         .output {
             grid-column: 1 / -1;
-            background-color: #212121; /* Negro puro para el display */
+            background-color: #212121;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            justify-content: space-around; /* Distribuye el espacio vertical */
-            padding: 16px 20px 8px; /* Ajuste de padding para el footer */
+            justify-content: space-around;
+            padding: 12px 15px 6px; /* Padding reducido */
             word-wrap: break-word;
             word-break: break-all;
-            border-radius: 12px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
-            min-height: 150px; /* Altura mínima para acomodar todo */
-            position: relative; /* Para posicionar el texto del footer */
-            transition: all 0.2s ease-in-out; /* Transición suave para cambios */
+            border-radius: 10px; /* Bordes ligeramente menos redondeados */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+            min-height: 120px; /* Altura mínima reducida */
+            position: relative;
+            transition: all 0.2s ease-in-out;
         }
         .output .previous-operand {
-            color: rgba(255, 255, 255, 0.6); /* Blanco semitransparente para texto secundario */
-            font-size: 1.1rem;
-            min-height: 1.1em;
-            flex-shrink: 0; /* Evita que se encoja */
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.0rem; /* Tamaño de fuente ligeramente reducido */
+            min-height: 1.0em;
+            flex-shrink: 0;
         }
         .output .current-operand {
-            color: white; /* Blanco puro para el número principal */
-            font-size: 3.2rem;
+            color: white;
+            font-size: 2.8rem; /* Tamaño de fuente principal reducido */
             font-weight: 400;
             line-height: 1.2;
-            margin-top: auto; /* Empuja hacia abajo */
-            flex-grow: 1; /* Permite que ocupe espacio disponible */
+            margin-top: auto;
+            flex-grow: 1;
             display: flex;
-            align-items: flex-end; /* Alinea el texto al final */
+            align-items: flex-end;
         }
-        /* Contenedor para la entrada de conversión y el resultado en Bs. */
         .output .conversion-display {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 10px; /* Espacio antes de esta sección */
+            gap: 6px; /* Espacio reducido */
+            margin-top: 8px; /* Margen reducido */
             align-items: flex-end;
-            flex-shrink: 0; /* Evita que se encoja */
-            padding-bottom: 5px; /* Pequeño padding para no tocar el footer */
+            flex-shrink: 0;
+            padding-bottom: 3px; /* Padding reducido */
         }
         .output .converted-operand {
-            color: #8BC34A; /* Light Green 500 para el resultado en Bolívares */
-            font-size: 1.3rem;
-            min-height: 1.2em;
+            color: #8BC34A;
+            font-size: 1.1rem; /* Tamaño de fuente reducido */
+            min-height: 1.1em;
             font-weight: 500;
-            text-align: right; /* Asegura que el texto se alinee a la derecha */
+            text-align: right;
             width: 100%;
         }
         .output .footer-text {
             position: absolute;
-            bottom: 8px; /* Pequeño margen desde abajo */
-            left: 15px; /* Pequeño margen desde la izquierda */
-            color: rgba(255, 255, 255, 0.3); /* Muy tenue */
-            font-size: 0.75rem; /* Muy pequeño */
-            font-weight: 300; /* Ligero */
-            pointer-events: none; /* No interactivo */
+            bottom: 6px; /* Margen reducido */
+            left: 10px; /* Margen reducido */
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem; /* Tamaño de fuente muy pequeño */
+            font-weight: 300;
+            pointer-events: none;
         }
         .hidden {
-            display: none !important; /* Tailwind's hidden class */
+            display: none !important;
         }
 
         /* Estilos para los botones numéricos y de operación */
         .calculator-button {
-            background-color: #616161; /* Gris oscuro para el fondo de botones numéricos */
-            color: white; /* Texto blanco */
-            padding: 20px 0;
-            font-size: 1.7rem;
+            background-color: #616161;
+            color: white;
+            padding: 16px 0; /* Padding vertical reducido */
+            font-size: 1.5rem; /* Tamaño de fuente reducido */
             font-weight: 400;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px; /* Bordes ligeramente menos redondeados */
             cursor: pointer;
             outline: none;
             transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Sombra más sutil */
         }
         .calculator-button:hover {
-            background-color: #757575; /* Gris un poco más claro al pasar el ratón */
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            background-color: #757575;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         .calculator-button:active {
-            background-color: #9E9E9E; /* Gris más claro al presionar */
+            background-color: #9E9E9E;
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
         .operator {
-            background-color: #2196F3; /* Azul para operadores */
+            background-color: #2196F3;
             color: white;
         }
         .operator:hover {
-            background-color: #42A5F5; /* Azul más claro */
+            background-color: #42A5F5;
         }
         .operator:active {
-            background-color: #1976D2; /* Azul más oscuro */
+            background-color: #1976D2;
         }
         .span-two {
             grid-column: span 2;
-            background-color: #2196F3; /* Azul para el botón de igual */
+            background-color: #2196F3;
             color: white;
         }
         .span-two:hover {
-            background-color: #42A5F5; /* Azul más claro */
+            background-color: #42A5F5;
         }
         .span-two:active {
-            background-color: #1976D2; /* Azul más oscuro */
+            background-color: #1976D2;
         }
         .clear-all, .delete-btn {
-            background-color: #F44336; /* Rojo para AC y DEL */
+            background-color: #F44336;
             color: white;
         }
         .clear-all:hover, .delete-btn:hover {
-            background-color: #E57373; /* Rojo más claro */
+            background-color: #E57373;
         }
         .clear-all:active, .delete-btn:active {
-            background-color: #D32F2F; /* Rojo más oscuro */
+            background-color: #D32F2F;
         }
     </style>
 </head>
