@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Quasar</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fuentes personalizadas: Roboto es la fuente de Material Design por excelencia */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #212121; /* Negro casi puro */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .calculator-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Más espacio entre secciones */
+            width: 100%;
+            max-width: 400px; /* Ligeramente más ancho */
+            background-color: #333333; /* Gris oscuro para la superficie */
+            border-radius: 16px; /* Bordes redondeados suaves */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.2); /* Sombra Material más profunda */
+            padding: 20px;
+        }
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 12px; /* Espaciado entre botones de modo */
+            margin-bottom: 0;
+        }
+        .mode-button {
+            padding: 10px 24px;
+            font-size: 1.0rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 20px; /* Bordes más redondeados (pill shape) */
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+            background-color: #424242; /* Gris oscuro para inactivos */
+            color: #E0E0E0; /* Blanco suave para texto */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+        }
+        .mode-button.active {
+            background-color: #1565C0; /* Azul fuerte para el activo (Blue 800) */
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada al estar activo */
+            transform: translateY(-1px); /* Ligero efecto de elevación */
+        }
+        .mode-button:hover:not(.active) {
+            background-color: #616161; /* Gris más claro al pasar el ratón */
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+        }
+        .mode-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Sombra mínima al presionar */
+        }
+
+        .business-mode-options {
+            background-color: #424242; /* Gris oscuro para el panel de tasas */
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra de Material Design para tarjetas */
+        }
+        .business-mode-options p {
+            color: #BDBDBD; /* Gris claro para texto */
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .rate-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .rate-input-group label {
+            color: #E0E0E0; /* Blanco suave */
+            font-size: 0.95rem;
+            min-width: 100px; /* Ancho fijo para la etiqueta */
+            font-weight: 500;
+        }
+        .rate-input-group input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #616161; /* Gris oscuro para el borde */
+            background-color: #212121; /* Fondo negro */
+            color: white; /* Texto blanco */
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .rate-input-group input:focus {
+            border-color: #2196F3; /* Azul primario al enfocar */
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3); /* Sombra de foco azul */
+        }
+        .convert-button {
+            padding: 12px 18px;
+            font-size: 1.0rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+            background-color: #2196F3; /* Azul Material para convertir */
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+            margin-top: 10px;
+        }
+        .convert-button:hover {
+            background-color: #42A5F5; /* Azul más claro al pasar el ratón */
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+        }
+        .convert-button:active {
+            background-color: #1976D2; /* Azul más oscuro al presionar */
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 0;
+            background-color: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            touch-action: manipulation;
+        }
+        .output {
+            grid-column: 1 / -1;
+            background-color: #212121; /* Negro puro para el display */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 24px 20px;
+            word-wrap: break-word;
+            word-break: break-all;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+            min-height: 100px;
+            position: relative; /* Para posicionar el texto del footer */
+        }
+        .output .previous-operand {
+            color: rgba(255, 255, 255, 0.6); /* Blanco semitransparente para texto secundario */
+            font-size: 1.1rem;
+            min-height: 1.1em;
+        }
+        .output .current-operand {
+            color: white; /* Blanco puro para el número principal */
+            font-size: 3.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+        .output .converted-operand {
+            color: #8BC34A; /* Light Green 500 para el resultado en Bolívares */
+            font-size: 1.3rem;
+            min-height: 1.2em;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .output .footer-text {
+            position: absolute;
+            bottom: 8px; /* Pequeño margen desde abajo */
+            left: 15px; /* Pequeño margen desde la izquierda */
+            color: rgba(255, 255, 255, 0.3); /* Muy tenue */
+            font-size: 0.75rem; /* Muy pequeño */
+            font-weight: 300; /* Ligero */
+        }
+
+        /* Estilos para los botones numéricos y de operación */
+        .calculator-button {
+            background-color: #616161; /* Gris oscuro para el fondo de botones numéricos */
+            color: white; /* Texto blanco */
+            padding: 20px 0;
+            font-size: 1.7rem;
+            font-weight: 400;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+        }
+        .calculator-button:hover {
+            background-color: #757575; /* Gris un poco más claro al pasar el ratón */
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        .calculator-button:active {
+            background-color: #9E9E9E; /* Gris más claro al presionar */
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .operator {
+            background-color: #2196F3; /* Azul para operadores */
+            color: white;
+        }
+        .operator:hover {
+            background-color: #42A5F5; /* Azul más claro */
+        }
+        .operator:active {
+            background-color: #1976D2; /* Azul más oscuro */
+        }
+        .span-two {
+            grid-column: span 2;
+            background-color: #2196F3; /* Azul para el botón de igual */
+            color: white;
+        }
+        .span-two:hover {
+            background-color: #42A5F5; /* Azul más claro */
+        }
+        .span-two:active {
+            background-color: #1976D2; /* Azul más oscuro */
+        }
+        .clear-all, .delete-btn {
+            background-color: #F44336; /* Rojo para AC y DEL */
+            color: white;
+        }
+        .clear-all:hover, .delete-btn:hover {
+            background-color: #E57373; /* Rojo más claro */
+        }
+        .clear-all:active, .delete-btn:active {
+            background-color: #D32F2F; /* Rojo más oscuro */
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="mode-selection">
+            <button id="normalModeBtn" class="mode-button active rounded-xl">Modo Normal</button>
+            <button id="businessModeBtn" class="mode-button rounded-xl">Calculador USD a BS</button>
+        </div>
+
+        <div id="businessModeOptions" class="business-mode-options hidden rounded-xl">
+            <p class="text-white text-sm">Introduce la tasa de conversión de USD a Bs. y presiona 'Convertir'.</p>
+            <div class="rate-input-group">
+                <label for="conversionRateInput">Tasa de Conversión (USD a Bs):</label>
+                <input type="number" id="conversionRateInput" placeholder="Ej: 36.5" inputmode="decimal">
+            </div>
+            <div class="flex justify-center mt-2">
+                <button id="applyConversionBtn" class="convert-button rounded-xl w-full">Convertir</button>
+            </div>
+        </div>
+
+        <div class="calculator-grid">
+            <div class="output">
+                <div data-previous-operand class="previous-operand"></div>
+                <div data-current-operand class="current-operand"></div>
+                <div data-converted-operand class="converted-operand"></div>
+                <div class="footer-text">Hecho con ❤ por Erick</div> <!-- Mensaje personalizado -->
+            </div>
+            <button data-all-clear class="calculator-button span-two clear-all rounded-xl">AC</button>
+            <button data-delete class="calculator-button delete-btn rounded-xl">DEL</button>
+            <button data-operator class="calculator-button operator rounded-xl">÷</button>
+            <button data-number class="calculator-button rounded-xl">1</button>
+            <button data-number class="calculator-button rounded-xl">2</button>
+            <button data-number class="calculator-button rounded-xl">3</button>
+            <button data-operator class="calculator-button operator rounded-xl">*</button>
+            <button data-number class="calculator-button rounded-xl">4</button>
+            <button data-number class="calculator-button rounded-xl">5</button>
+            <button data-number class="calculator-button rounded-xl">6</button>
+            <button data-operator class="calculator-button operator rounded-xl">+</button>
+            <button data-number class="calculator-button rounded-xl">7</button>
+            <button data-number class="calculator-button rounded-xl">8</button>
+            <button data-number class="calculator-button rounded-xl">9</button>
+            <button data-operator class="calculator-button operator rounded-xl">-</button>
+            <button data-number class="calculator-button rounded-xl">.</button>
+            <button data-number class="calculator-button rounded-xl">0</button>
+            <button data-equals class="calculator-button span-two rounded-xl">=</button>
+        </div>
+    </div>
+
+    <script>
+        class Calculator {
+            constructor(previousOperandTextElement, currentOperandTextElement, convertedOperandTextElement) {
+                this.previousOperandTextElement = previousOperandTextElement;
+                this.currentOperandTextElement = currentOperandTextElement;
+                this.convertedOperandTextElement = convertedOperandTextElement;
+                this.currentMode = 'normal';
+                this.conversionRate = 0; // Tasa de conversión única
+                this.clear();
+            }
+
+            clear() {
+                this.currentOperand = '';
+                this.previousOperand = '';
+                this.operation = undefined;
+                this.convertedOperand = '';
+                this.updateDisplay();
+            }
+
+            delete() {
+                this.currentOperand = this.currentOperand.toString().slice(0, -1);
+                this.convertedOperand = '';
+                this.updateDisplay();
+            }
+
+            appendNumber(number) {
+                if (number === '.' && this.currentOperand.includes('.')) return;
+                this.currentOperand = this.currentOperand.toString() + number.toString();
+                this.convertedOperand = '';
+                this.updateDisplay();
+            }
+
+            chooseOperation(operation) {
+                if (this.currentOperand === '') return;
+                if (this.previousOperand !== '') {
+                    this.compute();
+                }
+                this.operation = operation;
+                this.previousOperand = this.currentOperand;
+                this.currentOperand = '';
+                this.convertedOperand = '';
+                this.updateDisplay();
+            }
+
+            compute() {
+                let computation;
+                const prev = parseFloat(this.previousOperand);
+                const current = parseFloat(this.currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+
+                switch (this.operation) {
+                    case '+':
+                        computation = prev + current;
+                        break;
+                    case '-':
+                        computation = prev - current;
+                        break;
+                    case '*':
+                        computation = prev * current;
+                        break;
+                    case '÷':
+                        if (current === 0) {
+                            computation = 'Error';
+                        } else {
+                            computation = prev / current;
+                        }
+                        break;
+                    default:
+                        return;
+                }
+                this.currentOperand = computation;
+                this.operation = undefined;
+                this.previousOperand = '';
+                this.convertedOperand = '';
+                this.updateDisplay();
+            }
+
+            applyConversion() { // Método renombrado y simplificado
+                const current = parseFloat(this.currentOperand);
+                const rate = parseFloat(this.conversionRate); // Usar la tasa única
+                if (isNaN(current) || isNaN(rate) || rate <= 0) {
+                    this.convertedOperand = 'Error';
+                    this.updateDisplay();
+                    return;
+                }
+                this.convertedOperand = current * rate;
+                this.updateDisplay();
+            }
+
+            getDisplayNumber(number) {
+                const stringNumber = number.toString();
+                const integerDigits = parseFloat(stringNumber.split('.')[0]);
+                const decimalDigits = stringNumber.split('.')[1];
+                let integerDisplay;
+                if (isNaN(integerDigits)) {
+                    integerDisplay = '';
+                } else {
+                    integerDisplay = new Intl.NumberFormat('en-US', {
+                        maximumFractionDigits: 0
+                    }).format(integerDigits);
+                }
+                if (decimalDigits != null && decimalDigits !== '') {
+                    return `${integerDisplay}.${decimalDigits}`;
+                } else {
+                    return integerDisplay;
+                }
+            }
+
+            getBsDisplayNumber(number) {
+                if (isNaN(number) || typeof number !== 'number') return '';
+                return new Intl.NumberFormat('es-VE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(number);
+            }
+
+            updateDisplay() {
+                this.currentOperandTextElement.innerText =
+                    this.getDisplayNumber(this.currentOperand);
+                if (this.operation != null) {
+                    this.previousOperandTextElement.innerText =
+                        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+                } else {
+                    this.previousOperandTextElement.innerText = '';
+                }
+
+                if (this.currentMode === 'business' && this.convertedOperand !== '') {
+                    this.convertedOperandTextElement.innerText = `Bs: ${this.getBsDisplayNumber(this.convertedOperand)}`;
+                } else {
+                    this.convertedOperandTextElement.innerText = '';
+                }
+            }
+
+            setMode(mode) {
+                this.currentMode = mode;
+                const businessOptions = document.getElementById('businessModeOptions');
+                if (this.currentMode === 'business') {
+                    businessOptions.classList.remove('hidden');
+                    this.clear();
+                } else {
+                    businessOptions.classList.add('hidden');
+                    this.clear();
+                }
+                document.getElementById('normalModeBtn').classList.toggle('active', mode === 'normal');
+                document.getElementById('businessModeBtn').classList.toggle('active', mode === 'business');
+                this.updateDisplay();
+            }
+        }
+
+        // Obtener referencias a los elementos HTML
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operatorButtons = document.querySelectorAll('[data-operator]');
+        const equalsButton = document.querySelector('[data-equals]');
+        const deleteButton = document.querySelector('[data-delete]');
+        const allClearButton = document.querySelector('[data-all-clear]');
+        const previousOperandTextElement = document.querySelector('[data-previous-operand]');
+        const currentOperandTextElement = document.querySelector('[data-current-operand]');
+        const convertedOperandTextElement = document.querySelector('[data-converted-operand]');
+
+        // Botones y campos de modo
+        const normalModeBtn = document.getElementById('normalModeBtn');
+        const businessModeBtn = document.getElementById('businessModeBtn');
+        const conversionRateInput = document.getElementById('conversionRateInput'); // Campo de tasa única
+        const applyConversionBtn = document.getElementById('applyConversionBtn'); // Botón de convertir único
+
+        // Crear una instancia de la calculadora
+        const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement, convertedOperandTextElement);
+
+        // AñadirEventListeners a los botones numéricos
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.appendNumber(button.innerText);
+            });
+        });
+
+        // AñadirEventListeners a los botones de operador
+        operatorButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.chooseOperation(button.innerText);
+            });
+        });
+
+        // AñadirEventListener al botón de igual
+        equalsButton.addEventListener('click', button => {
+            calculator.compute();
+        });
+
+        // AñadirEventListener al botón de limpiar todo (AC)
+        allClearButton.addEventListener('click', button => {
+            calculator.clear();
+        });
+
+        // AñadirEventListener al botón de borrar (DEL)
+        deleteButton.addEventListener('click', button => {
+            calculator.delete();
+        });
+
+        // EventListeners para los botones de modo
+        normalModeBtn.addEventListener('click', () => calculator.setMode('normal'));
+        businessModeBtn.addEventListener('click', () => calculator.setMode('business'));
+
+        // EventListener para el input de tasa de conversión
+        conversionRateInput.addEventListener('input', (e) => {
+            calculator.conversionRate = parseFloat(e.target.value) || 0;
+        });
+
+        // EventListener para el botón de aplicar conversión
+        applyConversionBtn.addEventListener('click', () => {
+            calculator.applyConversion();
+        });
+
+        // Manejo de entrada de teclado
+        document.addEventListener('keydown', e => {
+            // Números y punto
+            if ((e.key >= '0' && e.key <= '9') || e.key === '.') {
+                calculator.appendNumber(e.key);
+            }
+            // Operadores
+            if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                calculator.chooseOperation(e.key === '/' ? '÷' : e.key);
+            }
+            // Enter para igual
+            if (e.key === 'Enter' || e.key === '=') {
+                e.preventDefault();
+                calculator.compute();
+            }
+            // Backspace para borrar
+            if (e.key === 'Backspace') {
+                calculator.delete();
+            }
+            // Escape para limpiar todo
+            if (e.key === 'Escape') {
+                calculator.clear();
+            }
+        });
+
+        // Inicializar el modo al cargar la página
+        window.onload = () => {
+            calculator.setMode('normal');
+        };
+    </script>
+</body>
+</html>
